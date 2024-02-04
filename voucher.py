@@ -64,12 +64,17 @@ class Voucher:
             print(f"Attempting to withdraw too much, only ${amount} remaining")
             return False 
         
+        # Ensure the voucher has not expired
+        if self.check_expired == True:
+            print("Voucher has expired")
+            return False
+        
         # Update the amount in the voucher account
         self.current -= amount
 
         # If there is less than $1 in account, consider it redeemed
         if math.floor(self.current) == 0:
-            self.redeemed == True
+            self.redeemed = True
             self.redeemed_date = datetime.now().date()
 
         return True
