@@ -1,15 +1,19 @@
 from datetime import datetime, timedelta
 import random
+import math
 
 class Voucher:
     def __init__(self, amount: float, reciever: str, authoriser: str, index: int):
         self.amount = amount # Voucher amount $$
+        self.current = self.amount # Current voucher value $$
         self.index = index # Index of current voucher (voucher #)
         self.code = self.create_code() # Create a unique code
         self.date_created = datetime.now().date() # Time that the voucher was created
         self.date_expiry = self.date_created + timedelta(weeks=156) # (YY-MM-DD)
         self.reciever = reciever # Recieving person
         self.authoriser = authoriser # Authorising person
+        self.redeemed = False # Is the voucher redeemed
+        self.redeemed_date = None # When was the voucher redeemed
 
     def create_code(self) -> str:
 
@@ -47,4 +51,26 @@ class Voucher:
             return True
         else:
             return False
+        
+    def redeem(self, amount: int) -> bool:
+
+        # Check if the voucher has already been redeemed
+        if self.redeemed == True:
+            print("Voucher already redeemed: Cannot complete action")
+            return False
+        
+        # Ensure that the withdrawl amount is not greater than the existing balance
+        if amount > self.current:
+            print(f"Attempting to withdraw too much, only ${amount} remaining")
+            return False 
+        
+        # Update the amount in the voucher account
+        self.current -= amount
+
+        # If there is less than $1 in account, consider it redeemed
+        if math.floor(self.current) == 0:
+            self.redeemed == True
+            self.redeemed_date = datetime.now().date()
+
+        return True
         
