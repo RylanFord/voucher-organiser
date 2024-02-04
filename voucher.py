@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import random
 
 class Voucher:
@@ -6,7 +6,8 @@ class Voucher:
         self.amount = amount # Voucher amount $$
         self.index = index # Index of current voucher (voucher #)
         self.code = self.create_code() # Create a unique code
-        self.date = datetime.now() # Time that the voucher was created
+        self.date_created = datetime.now().date() # Time that the voucher was created
+        self.date_expiry = self.date_created + timedelta(weeks=156) # (YY-MM-DD)
         self.reciever = reciever # Recieving person
         self.authoriser = authoriser # Authorising person
 
@@ -38,4 +39,12 @@ class Voucher:
         # Final code contains: Voucher number, zero, random number, highest factor (3 digits)
         code = ''.join([prefix_num, random_num, last_digits])
         return code
+    
+    def check_expired(self) -> bool:
+
+        # Check if the voucher has expired
+        if self.date_expiry < datetime.now().date():
+            return True
+        else:
+            return False
         
